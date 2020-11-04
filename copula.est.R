@@ -1,14 +1,24 @@
-library(quadprog)
-library(Matrix)
-library(graphics)
-library(copula)  
-
+# function for copula estimation with or with out PQD constraint
 # X: a n*2 matrix of data
-# m1, m2: degrees of Bernstein polynomial estimated by grid search if is m1 = NULL and m2 = NULL 
+# m1, m2: degrees of Bernstein polynomial estimated by grid search if m1 = NULL and m2 = NULL
 # is.pqd: is.pqd = F for unconstrained copula; is.pqd = T for PQD-constrained copula
 
 copula.est <- function(X, m1 = NULL, m2 = NULL, is.pqd = F){
 
+if(!require(quadprog)){
+  install.packages("quadprog")
+}
+if(!require(Matrix)){
+  install.packages("Matrix")
+}
+if(!require(graphics)){
+  install.packages("graphics")
+}
+
+library(quadprog)
+library(Matrix)
+library(graphics)
+  
 # Cm = Gm^T theta + XX + YY
 Gm.pqd <- function (u1, u2, m1, m2) {
   G0 <- matrix(0, m1 ,m2)
@@ -338,13 +348,16 @@ contour(x.points, y.points, z)
 return(list('theta.matrix' = theta.matrix, 'm1' = m1+1, 'm2' = m2+1))
 
 }
+
 #######################################################################
 
 # Example
+# install.packages("copula")
+library(copula)
 # sample n=100 iid data from bivarate Frank copula with theta.true not equal to 0
 n=100
-theta.true <- 3
+theta.true <- -2
 fr <- frankCopula(theta.true, 2)
 X <- rCopula(n, fr)
 
-copula.est(X, m1 = NULL, m2 = NULL, is.pqd = T)
+copula.est(X, m1 = NULL, m2 = NULL, is.pqd = F)
