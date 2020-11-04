@@ -347,4 +347,4 @@ theta.true <- 3
 fr <- frankCopula(theta.true, 2)
 X <- rCopula(n, fr)
 
-copula.est(X, m1=NULL, m2=NULL, is.pqd = T)
+copula.est(X, m1 = NULL, m2 = NULL, is.pqd = T)
