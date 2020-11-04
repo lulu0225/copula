@@ -4,7 +4,7 @@ library(graphics)
 library(copula)  
 
 # X: a n*2 matrix of data
-# m1, m2: degrees of Bernstein polynomial estimated by grid search if is NULL 
+# m1, m2: degrees of Bernstein polynomial estimated by grid search if is m1 = NULL and m2 = NULL 
 # is.pqd: is.pqd = F for unconstrained copula; is.pqd = T for PQD-constrained copula
 
 copula.est <- function(X, m1 = NULL, m2 = NULL, is.pqd = F){
