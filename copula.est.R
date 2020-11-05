@@ -1,7 +1,11 @@
+#######################################################################
 # function for copula estimation with or with out PQD constraint
+
 # X: a n*2 matrix of data
 # m1, m2: degrees of Bernstein polynomial estimated by grid search if m1 = NULL and m2 = NULL
 # is.pqd: is.pqd = F for unconstrained copula; is.pqd = T for PQD-constrained copula
+
+#######################################################################
 
 copula.est <- function(X, m1 = NULL, m2 = NULL, is.pqd = F){
 
@@ -18,33 +22,55 @@ if(!require(graphics)){
 library(quadprog)
 library(Matrix)
 library(graphics)
-  
-# Cm = Gm^T theta + XX + YY
+
+# Cm = Gm^T theta + XXX + YYY
 Gm.pqd <- function (u1, u2, m1, m2) {
-  G0 <- matrix(0, m1 ,m2)
+
+  G1 <- c()
+  G2 <- c()
+
   for (k1 in 1:m1){
-    for (k2 in 1:m2){
-      G0[k1, k2] <- choose((m1+1),k1) * choose((m2+1),k2) * u1^k1 * (1 - u1)^(m1 - k1 + 1) * u2^k2 * (1 - u2)^(m2 - k2 + 1)
+    G1[k1] <- choose((m1+1),k1) * u1^k1 * (1 - u1)^(m1 - k1 + 1)
     }
-  }
+
+  for (k2 in 1:m2){
+    G2[k2] <- choose((m2+1),k2) * u2^k2 * (1 - u2)^(m2 - k2 + 1)
+    }
+
+  G0 <- G1 %o% G2
+
+  # G0 <- matrix(0, m1 ,m2)
+  # for (k1 in 1:m1){
+  #   for (k2 in 1:m2){
+  #     G0[k1, k2] <- choose((m1+1),k1) * choose((m2+1),k2) * u1^k1 * (1 - u1)^(m1 - k1 + 1) * u2^k2 * (1 - u2)^(m2 - k2 + 1)
+  #   }
+  # }
+
   as.vector(t(G0))
 }
 
-
-Cm.pqd <- function(u1, u2, m1, m2, theta){
-  
+XXX <- function(u1, u2, m1, m2){
   XX <- 0
   for (k1 in 1 : (m1+1)){
     XX <- XX + k1/(m1+1) * choose((m1+1),k1) * u1^k1 * (1 - u1)^(m1 - k1 + 1) * u2^(m2+1)
   }
-  
+  XX
+}
+
+YYY <- function(u1, u2, m1, m2){
   YY <- 0
   for (k2 in 1 : m2){
     YY <- YY + k2/(m2+1) * choose((m2+1),k2) * u2^k2 * (1 - u2)^(m2 - k2 + 1) * u1^(m1+1)
   }
+  YY
+}
 
-  pro <- crossprod(Gm.pqd(u1, u2, m1, m2), theta) + XX + YY
+# Cm = Gm^T theta + XXX + YYY
+Cm.pqd <- function(u1, u2, m1, m2, theta){
+  
+  pro <- crossprod(Gm.pqd(u1, u2, m1, m2), theta) + XXX(u1, u2, m1, m2) + YYY(u1, u2, m1, m2)
   pro
+  
 }
 
 
@@ -53,15 +79,22 @@ opt.pqd <- function (m1, m2, U1, U2){
   # constraints A^T theta >= b0
   
   # PQD
-  W2 <- matrix(0, m1, m2)
+
+    W2.1 <- seq(1/(m1 + 1), m1/(m1 + 1), 1/(m1 + 1))
   
-  for (k1 in 1 : m1){
-    for (k2 in 1 : m2){
-      
-      W2[k1, k2] <- k1/(m1 + 1) * k2/(m2 + 1)
-      
-    }
-  }
+    W2.2 <-  seq(1/(m2 + 1), m2/(m2 + 1), 1/(m2 + 1))
+  
+  W2 <- W2.1 %o% W2.2
+  
+  # W2 <- matrix(0, m1, m2)
+  #
+  # for (k1 in 1 : m1){
+  #   for (k2 in 1 : m2){
+  #     
+  #     W2[k1, k2] <- k1/(m1 + 1) * k2/(m2 + 1)
+  #     
+  #   }
+  # }
   
   w2 <- as.vector(t(W2))
   
@@ -103,36 +136,57 @@ opt.pqd <- function (m1, m2, U1, U2){
   }
   
   R <- c()
+  R1 <- c()
+  R3 <- c()
+  
   for (k1 in 1: (m1 - 1)){
+    
+    r1 <- as.vector(t(cons.theta.1(k1, m2, m1, m2)))
+    R1 <- rbind(R1, r1)
+    
+    r3 <- as.vector(t(cons.theta.3(k1, 1, m1, m2)))
+    R3 <- rbind(R3, r3)
+    
     for (k2 in 1 : (m2 - 1)){
       r <- as.vector(t(cons.theta(k1, k2, m1, m2)))
       R <- rbind(R, r)
     }
   }
   
-  R1 <- c()
-  for (k1 in 1: (m1 - 1)){
-    r1 <- as.vector(t(cons.theta.1(k1, m2, m1, m2)))
-    R1 <- rbind(R1, r1)
-  }
-  
   R2 <- c()
+  R4 <- c()
+  
   for (k2 in 1: (m2 - 1)){
     r2 <- as.vector(t(cons.theta.2(m1, k2, m1, m2)))
     R2 <- rbind(R2, r2)
-  }
-  
-  R3 <- c()
-  for (k1 in 1: (m1 - 1)){
-    r3 <- as.vector(t(cons.theta.3(k1, 1, m1, m2)))
-    R3 <- rbind(R3, r3)
-  }
-  
-  R4 <- c()
-  for (k2 in 1: (m2 - 1)){
+    
     r4 <- as.vector(t(cons.theta.4(1, k2, m1, m2)))
     R4 <- rbind(R4, r4)
   }
+  
+  # R1 <- c()
+  # for (k1 in 1: (m1 - 1)){
+  #   r1 <- as.vector(t(cons.theta.1(k1, m2, m1, m2)))
+  #   R1 <- rbind(R1, r1)
+  # }
+  # 
+  # R2 <- c()
+  # for (k2 in 1: (m2 - 1)){
+  #   r2 <- as.vector(t(cons.theta.2(m1, k2, m1, m2)))
+  #   R2 <- rbind(R2, r2)
+  # }
+  # 
+  # R3 <- c()
+  # for (k1 in 1: (m1 - 1)){
+  #   r3 <- as.vector(t(cons.theta.3(k1, 1, m1, m2)))
+  #   R3 <- rbind(R3, r3)
+  # }
+  # 
+  # R4 <- c()
+  # for (k2 in 1: (m2 - 1)){
+  #   r4 <- as.vector(t(cons.theta.4(1, k2, m1, m2)))
+  #   R4 <- rbind(R4, r4)
+  # }
   
   r1 <- c(1, rep(0, m1*m2 - 1))
   r2 <- - c(rep(0,m2 - 1), -1, rep(0,(m1 - 1)*m2))
@@ -170,23 +224,7 @@ opt.pqd <- function (m1, m2, U1, U2){
   # theta minimize (1/2 theta^T D theta - d^T theta )
   D <- matrix (0, (m1 * m2), (m1 * m2))
   d <- c(rep(0, (m1 * m2)))
-  
-  XXX <- function(u1, u2, m1, m2){
-    XX <- 0
-    for (k1 in 1 : (m1+1)){
-      XX <- XX + k1/(m1+1) * choose((m1+1),k1) * u1^k1 * (1 - u1)^(m1 - k1 + 1) * u2^(m2+1)
-    }
-    XX
-  }
-  
-  YYY <- function(u1, u2, m1, m2){
-    YY <- 0
-    for (k2 in 1 : m2){
-      YY <- YY + k2/(m2+1) * choose((m2+1),k2) * u2^k2 * (1 - u2)^(m2 - k2 + 1) * u1^(m1+1)
-    }
-    YY
-  }
-  
+
   for ( i in 1:n ){
     Cn[i] <- 1 / (n + 1) * sum(U1 <= U1[i] & U2 <= U2[i])
     D <- D + 2 * n^2 / (n+1)^2 / (n/(n+1)^2 * Cn[i] * (1 - Cn[i]) + .001) * tcrossprod(Gm.pqd(U1[i], U2[i], m1, m2))
@@ -223,7 +261,7 @@ Dm <- function (m1, m2, U1, U2, x.points, y.points){
     for (i in 1:N){
       Cn[i] <- 1 / (n+1) * sum(U1 <= x.points[i] & U2 <= y.points[j])
       Cest[i] <- Cm.pqd(x.points[i], y.points[j], m1, m2, theta)
-       Rn <- Rn + (Cn[i]-Cest[i])^2/(Cest[i]*(1-Cest[i]) + .001)
+      Rn <- Rn + (Cn[i]-Cest[i])^2/(Cest[i]*(1-Cest[i]) + .001)
     }
   }
   Rn / N^2
@@ -308,6 +346,8 @@ find <- function(U1, U2, tol =  10^(-2)){
 U1 <- X[,1]
 U2 <- X[,2]
 
+n <- length(U1)
+
 # transform to pseudo-observations
 ec1 <- ecdf(U1)
 ec2 <- ecdf(U2)
@@ -332,15 +372,16 @@ theta <- opt.pqd(m1, m2, U1, U2)
 # convert theta from vector to matrix
 theta.matrix <- matrix(theta, m1, m2, byrow = T)
 
+
+x.points <- seq(0.001, 1, length.out = 100)
+y.points <- seq(0.001, 1, length.out = 100)
+
 z <- matrix(0, 100, 100)
 for (x in 1:100){
   for (y in 1:100){
     z[x, y] <- Cm.pqd(x.points[x], y.points[y], m1, m2, theta)
   }
 }
-
-x.points <- seq(0.001, 1, length.out = 100)
-y.points <- seq(0.001, 1, length.out = 100)
 
 # comtour plot of estimated copula
 contour(x.points, y.points, z)
