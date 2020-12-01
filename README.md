@@ -23,7 +23,7 @@ copula.est(X, m1 = NULL, m2 = NULL, is.pqd = F)
 
 **X**: a n*2 matrix of data.
 
-**m1, m2**: degrees of Bernstein polynomial estimated by grid search if m1 = NULL and m2 = NULL.
+**m1, m2**: degrees of Bernstein polynomial. m1 and m2 are estimated by grid search if m1 = NULL and m2 = NULL.
 
 **is.pqd**: is.pqd = F for unconstrained copula; is.pqd = T for PQD-constrained copula. The default is is.pqd = F.
 
