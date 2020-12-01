@@ -1,5 +1,5 @@
 #######################################################################
-# function for copula estimation with or with out PQD constraint
+# function for copula estimation with or without PQD constraint
 
 # X: a n*2 matrix of data
 # m1, m2: degrees of Bernstein polynomial estimated by grid search if m1 = NULL and m2 = NULL
