@@ -21,20 +21,20 @@ copula.est(X, m1 = NULL, m2 = NULL, is.pqd = F)
 
 ## Arguments
 
-X: a n*2 matrix of data.
+**X**: a n*2 matrix of data.
 
-m1, m2: degrees of Bernstein polynomial estimated by grid search if m1 = NULL and m2 = NULL.
+**m1, m2**: degrees of Bernstein polynomial estimated by grid search if m1 = NULL and m2 = NULL.
 
-is.pqd: is.pqd = F for unconstrained copula; is.pqd = T for PQD-constrained copula. The default is is.pqd = F.
+**is.pqd**: is.pqd = F for unconstrained copula; is.pqd = T for PQD-constrained copula. The default is is.pqd = F.
 
 
 ## Value
 
-theta.matrix: A matrix of estimated theta_(k1, k2), k1 = 1, ..., m1-1, k2 = 1, ..., m2-1.
+**theta.matrix**: A matrix of estimated theta_(k1, k2), k1 = 1, ..., m1-1, k2 = 1, ..., m2-1.
 
-m1: estimated degree m1.
+**m1**: estimated degree m1.
 
-m2: estimated degree m2.
+**m2**: estimated degree m2.
 
 ## Note
 
