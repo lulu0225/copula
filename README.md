@@ -15,7 +15,9 @@ https://doi.org/10.1080/07350015.2020.1855186
 
 ## Usage
 
+``` r
 copula.est(X, m1 = NULL, m2 = NULL, is.pqd = F)
+```
 
 ## Arguments
 
@@ -28,7 +30,7 @@ is.pqd: is.pqd = F for unconstrained copula; is.pqd = T for PQD-constrained copu
 
 ## Value
 
-theta.matrix: A matrix of estimated theta_(k1, k2), k1 = 1, ..., m1-1, k2 = 1, ..., m2-2.
+theta.matrix: A matrix of estimated theta_(k1, k2), k1 = 1, ..., m1-1, k2 = 1, ..., m2-1.
 
 m1: estimated degree m1.
 
