@@ -21,7 +21,7 @@ copula.est(X, m1 = NULL, m2 = NULL, is.pqd = F)
 
 ## Arguments
 
-**X**: a n*2 matrix of data. n is sample size.
+**X**: a n*2 matrix of data. n is the sample size.
 
 **m1, m2**: degrees of Bernstein polynomial. m1 and m2 will be estimated by grid search if m1 = NULL and m2 = NULL.
 
