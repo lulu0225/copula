@@ -390,15 +390,3 @@ return(list('theta.matrix' = theta.matrix, 'm1' = m1+1, 'm2' = m2+1))
 
 }
 
-#######################################################################
-
-# Example
-# install.packages("copula")
-library(copula)
-# sample n=100 iid data from bivarate Frank copula with theta.true not equal to 0
-n=100
-theta.true <- -2
-fr <- frankCopula(theta.true, 2)
-X <- rCopula(n, fr)
-
-copula.est(X, m1 = NULL, m2 = NULL, is.pqd = F)
