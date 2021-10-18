@@ -373,7 +373,7 @@ copula.est <- function(X, m1 = NULL, m2 = NULL, is.pqd = F, print.contour = T){
   # convert theta from vector to matrix
   theta.matrix <- matrix(theta, m1, m2, byrow = T)
   
-  if(print.contour = T){
+  while(print.contour == T){
   
   x.points <- seq(0.001, 1, length.out = 100)
   y.points <- seq(0.001, 1, length.out = 100)
