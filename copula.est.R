@@ -4,7 +4,7 @@
 # X: a n*2 matrix of data
 # m1, m2: degrees of Bernstein polynomial estimated by grid search if m1 = NULL and m2 = NULL
 # is.pqd: is.pqd = F for unconstrained copula; is.pqd = T for PQD-constrained copula
-# print.contour: print the countour plot of estimated copula if print.contour = T 
+# print.contour: print the countour plot of estimated copula if print.contour = T, otherwise print.contour = F 
 
 #######################################################################
 
