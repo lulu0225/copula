@@ -6,7 +6,7 @@
 
 #######################################################################
 
-# check the estimation function "copula.est"
+# check if the estimation function "copula.est" exists
 exists("copula.est") 
 
 copula.test <- function(X, m1 = NULL, m2 = NULL){
