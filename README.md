@@ -27,6 +27,8 @@ copula.est(X, m1 = NULL, m2 = NULL, is.pqd = F)
 
 **is.pqd**: is.pqd = F for unconstrained copula; is.pqd = T for PQD-constrained copula. The default is is.pqd = F.
 
+**print.contour**: print the countour plot of estimated copula if print.contour = T.
+
 
 ## Value
 
@@ -52,7 +54,7 @@ theta.true <- -2
 fr <- frankCopula(theta.true, 2)
 X <- rCopula(n, fr)
 
-copula.est(X, m1 = NULL, m2 = NULL, is.pqd = F)
+copula.est(X, m1 = NULL, m2 = NULL, is.pqd = F, print.contour = T)
 
 $theta.matrix
               [,1]         [,2]          [,3]
