@@ -16,7 +16,7 @@ https://doi.org/10.1080/07350015.2020.1855186
 ## Usage
 
 ``` r
-copula.est(X, m1 = NULL, m2 = NULL, is.pqd = F)
+copula.est(X, m1 = NULL, m2 = NULL, is.pqd = F, print.contour = T)
 ```
 
 ## Arguments
